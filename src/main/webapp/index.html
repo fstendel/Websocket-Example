@@ -5,24 +5,21 @@
 
 <body>
 <meta charset="utf-8">
-<title>HelloWorld Web sockets</title>
+<title>Web sockets sample chat</title>
 <script language="javascript" type="text/javascript">
-            var wsUri = getRootUri() + "/WebsocketSample-1.0.0-SNAPSHOT/websocket";
 
+            function getWebsocketUrl() {
 
-            function getRootUri() {
-                return "ws://" + (document.location.hostname == "" ? "localhost" : document.location.hostname) + ":" +
-                        (document.location.port == "" ? "8080" : document.location.port);
+                var hostname = (document.location.hostname == "" ? "localhost" : document.location.hostname);
+                var port = (document.location.port == "" ? "8080" : document.location.port);
+                var path = document.location.pathname + "/websocket";
+
+                return "ws://" + hostname + ":" + port + path;
             }
 
-            function init() {
-                output = document.getElementById("output");
-            }
+            function initializeWebsocket() {
 
-
-            function sampleInitialziers() {
-
-                websocket = new WebSocket(wsUri);
+                websocket = new WebSocket(getWebsocketUrl());
                 websocket.onopen = function(evt) {
                     onOpen(evt)
                 };
@@ -33,25 +30,34 @@
                     onError(evt)
                 };
 
+                websocket.onclose = function(evt){
+                    onClose(evt)
+                };
             }
 
             function onOpen(evt) {
-                writeToScreen("Connected to Endpoint!");
-                doSend(textID.value);
+                writeToScreen("Verbindung zum Chatserver hergestellt.");
 
             }
 
             function onMessage(evt) {
-                writeToScreen("Message Received: " + evt.data);
+                writeToScreen("Nachricht erhalten: " + evt.data);
             }
 
             function onError(evt) {
                 writeToScreen('<span style="color: red;">ERROR:</span> ' + evt.data);
             }
 
-            function doSend(message) {
-                writeToScreen("Message Sent: " + message);
+            function onClose(evt) {
+                writeToScreen("Verbindung zum Chatserver abgebrochen.");
+
+            }
+
+            function doSend() {
+                var message = document.getElementById('textID').value;
                 websocket.send(message);
+                event.preventDefault();
+                return false;
             }
 
             function writeToScreen(message) {
@@ -62,12 +68,16 @@
                 output.appendChild(pre);
             }
 
-            window.onload=sampleInitialziers;
-            window.addEventListener("load", init, false);
+            window.onload=initializeWebsocket;
 
         </script>
 
-<h1 style="text-align: center;">Hello World WebSocket Client</h2>
+<h1 style="text-align: center;">Web sockets sample chat</h2>
+    <form onsubmit="doSend();">
+        <input id="submitId" value="Send" type="submit">
+        <input id="textId" name="message" value="" type="text"><br>
+    </form>
+
 
     <br>
     <div id="output"></div>
