@@ -12,9 +12,13 @@
 
                 var hostname = (document.location.hostname == "" ? "localhost" : document.location.hostname);
                 var port = (document.location.port == "" ? "8080" : document.location.port);
-                var path = document.location.pathname + "/websocket";
+                var path = document.location.pathname;
 
-                return "ws://" + hostname + ":" + port + path;
+                var urlUncleaned = "ws://" + hostname + ":" + port + path;
+
+                var urlCleaned = urlUncleaned.substring(0, urlUncleaned.lastIndexOf("/"));
+                return (urlCleaned + "/websocket");
+
             }
 
             function initializeWebsocket() {
@@ -54,7 +58,7 @@
             }
 
             function doSend() {
-                var message = document.getElementById('textID').value;
+                var message = document.getElementById('textId').value;
                 websocket.send(message);
                 event.preventDefault();
                 return false;
