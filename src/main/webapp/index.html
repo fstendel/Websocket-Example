@@ -1,3 +1,8 @@
+<!--
+    Html page implementing a simple websocket chat client
+    (loosely based on the websockets tutorial found @ https://www.tutorialspoint.com/ )
+
+-->
 <html>
 <head>
     <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
@@ -12,9 +17,13 @@
 
                 var hostname = (document.location.hostname == "" ? "localhost" : document.location.hostname);
                 var port = (document.location.port == "" ? "8080" : document.location.port);
-                var path = document.location.pathname + "/websocket";
+                var path = document.location.pathname;
 
-                return "ws://" + hostname + ":" + port + path;
+                var urlUncleaned = "ws://" + hostname + ":" + port + path;
+
+                var urlCleaned = urlUncleaned.substring(0, urlUncleaned.lastIndexOf("/"));
+                return (urlCleaned + "/websocket");
+
             }
 
             function initializeWebsocket() {
@@ -53,8 +62,8 @@
 
             }
 
-            function doSend() {
-                var message = document.getElementById('textID').value;
+            function doSend(event) {
+                var message = document.getElementById('textId').value;
                 websocket.send(message);
                 event.preventDefault();
                 return false;
@@ -69,11 +78,11 @@
             }
 
             window.onload=initializeWebsocket;
-
+            window.addEventListener("submit",doSend,false);
         </script>
 
-<h1 style="text-align: center;">Web sockets sample chat</h2>
-    <form onsubmit="doSend();">
+<h1 style="text-align: center;">Web sockets sample chat</h1>
+    <form id="chatForm">
         <input id="submitId" value="Send" type="submit">
         <input id="textId" name="message" value="" type="text"><br>
     </form>

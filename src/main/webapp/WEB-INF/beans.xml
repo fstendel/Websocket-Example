@@ -1,0 +1,9 @@
+<beans xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/beans_1_2.xsd"
+       version="1.2" bean-discovery-mode="all">
+
+    <!-- We do not want to annotate each bean with 'bean defining annotations'
+    (for instance JAX-RS Resource which are - by default - RequestScoped)
+    , so bean-discovery-mode is set to 'all'  -->
+</beans>

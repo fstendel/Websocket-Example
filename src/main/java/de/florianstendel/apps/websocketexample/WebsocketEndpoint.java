@@ -4,17 +4,13 @@ import javax.inject.Inject;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
- * Created by Florian on 25.10.2016.
+ * Class implementing an websocket-endpoint used
+ * for publishing messages.
+ *
+ * @author Florian Stendel
+ * @since 1.0
  */
 @ServerEndpoint("/websocket")
 public class WebsocketEndpoint {
@@ -22,29 +18,57 @@ public class WebsocketEndpoint {
     private Session session;
 
     @Inject
-    private MessageController messageController;
+    private MessageServer messageServer;
 
+
+    /**
+     * Method called when the connected websocket client pushes a message
+     * to the endpoint.
+     *
+     * @param message
+     *      String containing the text message.
+     */
     @OnMessage
     public void onMessage(String message) {
-        this.messageController.broadcastMessage(message);
+        this.messageServer.broadcastMessage(message);
     }
 
+    /**
+     * Method called when a websocket client connects.
+     *
+     * @param session
+     *      Session data of the connecting websocket client.
+     */
     @OnOpen
     public void onWebsocketConnect(Session session) {
 
         this.session = session;
-        this.messageController.register(this);
+        this.messageServer.register(this);
 
     }
 
+    /**
+     * Method called when a websocket client disconnects.
+     *
+     * @param reason
+     *      A CloseReason object containing the reason why a websocket client cancelled
+     *      or has been ask to cancel the connection.
+     *      */
     @OnClose
     public void onWebsocketDisconnect(CloseReason reason) {
 
-        this.messageController.unregister(this);
+        this.messageServer.unregister(this);
         this.session = null;
     }
 
 
+    /**
+     * Method called by other classes to publish a text message via
+     * this websocketendpoint instance.
+     *
+     * @param text
+     *      Text to be published.
+     */
     public void publishMessage(final String text){
 
         if(session != null){
